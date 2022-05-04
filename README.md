@@ -5,6 +5,8 @@
 
 1. Postgres
 2. Mongodb
+	2.1 Para subir uma versão do docker teve ser acessado a pasta docker e rodar: docker-compose -f stack.yml up
+	 mongosh "mongodb://localhost:27017/sales"
 3. RabbitMQ
 4. Auth API
 5. Containers docker
