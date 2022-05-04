@@ -1,0 +1,59 @@
+# configuration mongodb
+version: '3.1'
+
+services:
+
+  auth-db:
+    container_name: auth-db
+    image: 'postgres:13-alpine'
+    restart: always
+    environment:
+      - POSTGRES_DB=auth-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=UTC
+    ports:
+      - 5432:5432
+    volumes:
+      - $HOME/docker/volumes/auth-db:/var/lib/postgresql/data
+
+  product-db:
+    container_name: product-db
+    image: 'postgres:13-alpine'
+    restart: always
+    environment:
+      - POSTGRES_DB=product-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - TZ=UTC
+    ports:
+      - 5433:5433
+    volumes:
+      - $HOME/docker/volumes/product-db:/var/lib/postgresql/data      
+
+  mongo_sales:
+    container_name: mongo_sales
+    image: 'mongo:4.0.5'
+    restart: always
+    command: mongod
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=xOawerLu7
+      - MONGO_INITDB_DATABASE=sales
+      - TZ=UTC
+    ports:
+      - 27017:27017
+      - 28017:28017
+    volumes:
+      - $HOME/docker/volumes/mongo_sales:/docker-entrypoint-initdb.d
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+  sales_rabbit:
+    container_name: sales_rabbit
+    image: 'rabbitmq:3-management'
+    ports:
+      - 5672:5672
+      - 25676:25676
+      - 15672:15672
+    volumes:
+      - $HOME/docker/volumes/sales_rabbit:/var/lib/postgresql/data 
