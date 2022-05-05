@@ -4,3 +4,16 @@ server:
 spring:
   application:
     name: Product-api
+
+  # configuration postgres
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:5432/product-db
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
+    database: postgresql
