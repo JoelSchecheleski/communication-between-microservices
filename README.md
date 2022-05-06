@@ -1,14 +1,9 @@
 ### Comunicação entre microserviços
 
-<div align="left">
 ![](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange)
-</div>
-
-<div align="left">
 ![](https://img.shields.io/badge/Autor-Joel%20Schecheleski-brightgreen)
 ![](https://img.shields.io/badge/Language-java-brightgreen)
 ![](https://img.shields.io/badge/Framework-springboot-brightgreen)
-</div>
 	
 
 ![arquitetura-simples](https://user-images.githubusercontent.com/3439261/166570723-c933d159-4a10-4afb-b5a3-afd0d89b52ef.png)
