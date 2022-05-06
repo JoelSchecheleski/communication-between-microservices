@@ -1,10 +1,13 @@
 ### Comunicação entre microserviços
-
+![](https://img.shields.io/badge/PDI-Em%20andamento-brightgreen)
 ![](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange)
 ![](https://img.shields.io/badge/Autor-Joel%20Schecheleski-brightgreen)
 ![](https://img.shields.io/badge/Language-java-brightgreen)
 ![](https://img.shields.io/badge/Framework-springboot-brightgreen)
 	
+## Sonar
+[![Quality gate](https://sonarcloud.io/api/project_badges/quality_gate?project=JoelSchecheleski_communication-between-microservices)](https://sonarcloud.io/dashboard?id=JoelSchecheleski_communication-between-microservices)
+
 
 ![arquitetura-simples](https://user-images.githubusercontent.com/3439261/166570723-c933d159-4a10-4afb-b5a3-afd0d89b52ef.png)
 
