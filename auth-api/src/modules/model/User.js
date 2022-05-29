@@ -1,5 +1,5 @@
 import Sequelize from "sequelize"
-import sequelize from "../../../config/db/db-config.js"
+import sequelize from "../../config/db/db-config.js"
 
 const User = sequelize.define("user", {
     id: {type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true},
