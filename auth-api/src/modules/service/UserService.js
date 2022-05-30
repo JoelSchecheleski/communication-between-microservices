@@ -1,6 +1,11 @@
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+
 import UserRepository from "../repository/UserRepository.js";
-import * as httpStatus from "../../config/constants/httpStatus.js"
 import UserException from "../exceptions/UserException.js";
+import * as httpStatus from "../../config/constants/httpStatus.js"
+import * as secrets from "../../config/constants/secrets.js";
+import {API_SECRET} from "../../config/constants/secrets.js";
 
 class UserService {
 
@@ -27,6 +32,30 @@ class UserService {
         }
     }
 
+    async getAccessToken(req) {
+        try {
+            const {email, password} = req.body;
+            this.validateAccessTokenData(email, password);
+            let user = await UserRepository.findByEmail(email);
+            this.validateUserNotFound(user);
+            await this.validatePassword(password, user.password);
+            const authUser = {
+                id: user.id, name: user.name, password: user.password
+            }
+            const accessToken = jwt.sign({authUser}, secrets.API_SECRET, {expiresIn: '1d'})
+            return {
+                status: httpStatus.SUCCESS,
+                accessToken,
+            }
+        } catch (err) {
+            return {
+                status: err.status ? err.status : httpStatus.UNAUTHORIZED,
+                message: err.message,
+            }
+        }
+
+    }
+
     validateRequestData(email) {
         if (!email) {
             throw new UserException(httpStatus.BAD_RAQUEST, "User email was not informed.")
@@ -35,9 +64,22 @@ class UserService {
 
     validateUserNotFound(user) {
         if (!user) {
-            throw new Error(httpStatus.BAD_RAQUEST, "User was not found");
+            throw new UserException(httpStatus.BAD_RAQUEST, "User was not found.");
         }
     }
+
+    validateAccessTokenData(email, password) {
+        if (!email || !password) {
+            throw new UserException(httpStatus.UNAUTHORIZED, "Email and password is required.");
+        }
+    }
+
+    async validatePassword(password, hasPassword) {
+        if (!await bcrypt.compare(password, hasPassword)) {
+            throw new UserException(httpStatus.UNAUTHORIZED, "Password doesn't match");
+        }
+    }
+
 }
 
 export default new UserService();
