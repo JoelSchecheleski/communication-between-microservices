@@ -1,0 +1,14 @@
+### get auth
+POST http://localhost:8080/api/user/auth
+Content-Type: application/json
+
+{
+    "email": "teste@gmail.com",
+    "password": "123456"
+}
+
+
+### get status
+POST http://localhost:8080/api/status
+Content-Type: application/json
+Authorization: Bearer {{auth-api}}
