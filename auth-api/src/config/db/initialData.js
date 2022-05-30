@@ -1,18 +1,24 @@
 import bcrypt from "bcrypt";
-import User from "../../modules/model/User.js";
+import User from "../../domain/dto/User.js";
 
-export async function createInitialData(){
-    try {
-        await User.sync({force: true});
+export async function createInitialData() {
+  try {
+    await User.sync({ force: true });
 
-        let password = await bcrypt.hash("123456", 10);
-    
-        await User.create({
-            name: "User teste",
-            email: "teste@gmail.com",
-            password: password,
-        });
-    } catch (error) {
-        console.error(`Error when: ${error}`);
-    }
+    let password = await bcrypt.hash("123456", 10);
+
+    await User.create({
+      name: "User Test 1",
+      email: "testeuser1@gmail.com",
+      password: password,
+    });
+
+    await User.create({
+      name: "User Test 2",
+      email: "testeuser2@gmail.com",
+      password: password,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 }
