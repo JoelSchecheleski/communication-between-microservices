@@ -2,18 +2,32 @@ server:
   port: ${PORT:8082}
 
 spring:
-  application:
-    name: Product-api
+  profiles:
+    active: development
+  security:
+    user:
+      name: postgres
+      password: postgres
 
-  # configuration postgres
   datasource:
     driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/product-db
     username: postgres
     password: postgres
-    url: jdbc:postgresql://localhost:5432/product-db
+
   jpa:
-    show-sql: true
-    generate-ddl: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: create #update # When you launch the application for the first time - switch "none" at "create"
+    show-sql: true
     database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+
+#logging:
+#  pattern:
+#    console: "%d %-5level %logger : %msg%n"
+#  level:
+#    org.springframework: info
+#    org.hibernate: debug
+
