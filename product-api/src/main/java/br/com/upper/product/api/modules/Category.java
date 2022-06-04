@@ -7,6 +7,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.springframework.beans.BeanUtils;
+
+import br.com.upper.product.api.dto.CategoryRequest;
+import br.com.upper.product.api.dto.CategoryResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,4 +29,9 @@ public class Category {
 
     @Column(name = "description", nullable = false)
     private String description;
+    public static Category of(CategoryRequest request) {
+        var category = new Category();
+        BeanUtils.copyProperties(request, category);
+        return category;
+    }
 }
