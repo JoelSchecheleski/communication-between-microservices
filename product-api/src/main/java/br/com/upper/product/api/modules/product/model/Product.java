@@ -1,4 +1,4 @@
-package br.com.upper.product.api.modules;
+package br.com.upper.product.api.modules.product.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -6,10 +6,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.upper.product.api.modules.category.model.Category;
+import br.com.upper.product.api.modules.supplier.model.Supplier;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

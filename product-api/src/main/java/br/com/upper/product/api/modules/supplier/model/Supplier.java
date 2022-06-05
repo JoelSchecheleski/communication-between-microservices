@@ -1,4 +1,4 @@
-package br.com.upper.product.api.modules;
+package br.com.upper.product.api.modules.supplier.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -9,8 +9,7 @@ import javax.persistence.Table;
 
 import org.springframework.beans.BeanUtils;
 
-import br.com.upper.product.api.dto.CategoryRequest;
-import br.com.upper.product.api.dto.CategoryResponse;
+import br.com.upper.product.api.modules.supplier.dto.SupplierRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,19 +18,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "category")
-public class Category {
+@Table(name = "supplier")
+public class Supplier {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "description", nullable = false)
-    private String description;
-    public static Category of(CategoryRequest request) {
-        var category = new Category();
-        BeanUtils.copyProperties(request, category);
-        return category;
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    public static Supplier of(SupplierRequest request) {
+        var supplier = new Supplier();
+        BeanUtils.copyProperties(request, supplier);
+        return supplier;
     }
 }

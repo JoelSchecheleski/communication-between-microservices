@@ -1,4 +1,4 @@
-package br.com.upper.product.api.dto;
+package br.com.upper.product.api.modules.category.dto;
 
 import lombok.Data;
 

@@ -1,9 +1,8 @@
-package br.com.upper.product.api.dto;
+package br.com.upper.product.api.modules.category.dto;
 
 import org.springframework.beans.BeanUtils;
 
-import br.com.upper.product.api.modules.Category;
-
+import br.com.upper.product.api.modules.category.model.Category;
 import lombok.Data;
 
 @Data

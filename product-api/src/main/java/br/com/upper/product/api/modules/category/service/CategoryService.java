@@ -1,14 +1,14 @@
-package br.com.upper.product.api.service;
+package br.com.upper.product.api.modules.category.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import br.com.upper.product.api.config.ValidationException;
-import br.com.upper.product.api.dto.CategoryRequest;
-import br.com.upper.product.api.dto.CategoryResponse;
-import br.com.upper.product.api.modules.Category;
-import br.com.upper.product.api.repository.CategoryRepository;
+import br.com.upper.product.api.modules.category.dto.CategoryRequest;
+import br.com.upper.product.api.modules.category.dto.CategoryResponse;
+import br.com.upper.product.api.modules.category.repository.CategoryRepository;
+import br.com.upper.product.api.modules.category.model.Category;
 
 @Service
 public class CategoryService {
