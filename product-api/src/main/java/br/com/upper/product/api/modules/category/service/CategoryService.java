@@ -7,14 +7,18 @@ import org.springframework.util.ObjectUtils;
 import br.com.upper.product.api.config.ValidationException;
 import br.com.upper.product.api.modules.category.dto.CategoryRequest;
 import br.com.upper.product.api.modules.category.dto.CategoryResponse;
-import br.com.upper.product.api.modules.category.repository.CategoryRepository;
 import br.com.upper.product.api.modules.category.model.Category;
+import br.com.upper.product.api.modules.category.repository.CategoryRepository;
 
 @Service
 public class CategoryService {
 
     @Autowired
     private CategoryRepository categoryRepository;
+
+    public Category findById(Integer id) {
+        return categoryRepository.findById(id).orElseThrow(() -> new ValidationException("There's no category for the given ID."));
+    }
 
     public CategoryResponse save(CategoryRequest request) {
         validateCategoryNameInformed(request);
