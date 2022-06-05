@@ -1,5 +1,8 @@
 package br.com.upper.product.api.modules.supplier.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -15,6 +18,21 @@ public class SupplierService {
 
     @Autowired
     private SupplierRepository supplierRepository;
+
+    public SupplierResponse findByIdResponse(Integer id) {
+        return SupplierResponse.of(findById(id));
+    }
+
+    public List<SupplierResponse> findAll() {
+        return supplierRepository.findAll().stream().map(SupplierResponse::of).collect(Collectors.toList());
+    }
+
+    public List<SupplierResponse> findByName(String name) {
+        if (ObjectUtils.isEmpty(name)) {
+            throw new ValidationException("The supplier name was not informed.");
+        }
+        return supplierRepository.findByNameContainingIgnoreCase(name).stream().map(SupplierResponse::of).collect(Collectors.toList());
+    }
 
     public Supplier findById(Integer id) {
         return supplierRepository.findById(id).orElseThrow(() -> new ValidationException("There's no supplier for the given ID."));
