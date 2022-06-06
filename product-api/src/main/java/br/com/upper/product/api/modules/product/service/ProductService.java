@@ -1,5 +1,8 @@
 package br.com.upper.product.api.modules.product.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
@@ -25,6 +28,38 @@ public class ProductService {
 
     @Autowired
     private CategoryService categoryService;
+
+    public List<ProductResponse> findAll() {
+        return productRepository.findAll().stream().map(ProductResponse::of).collect(Collectors.toList());
+    }
+
+    public ProductResponse findByIdResponse(Integer id) {
+        return ProductResponse.of(findById(id));
+    }
+    public List<ProductResponse> findByName(String name) {
+       return productRepository.findByNameContainingIgnoreCase(name).stream().map(ProductResponse::of).collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> findBySupplierId(Integer supplierId) {
+        if(ObjectUtils.isEmpty(supplierId)) {
+            throw  new ValidationException("The product's supplier was not informed");
+        }
+        return productRepository.findBySupplierId(supplierId).stream().map(ProductResponse::of).collect(Collectors.toList());
+    }
+
+    public List<ProductResponse> findByCategoryId(Integer categoryId) {
+        if(ObjectUtils.isEmpty(categoryId)) {
+            throw  new ValidationException("The product's category was not informed");
+        }
+        return productRepository.findByCategoryId(categoryId).stream().map(ProductResponse::of).collect(Collectors.toList());
+    }
+
+    public Product findById(Integer id) {
+        if(ObjectUtils.isEmpty(id)) {
+            throw  new ValidationException("The product's id was not informed");
+        }
+        return productRepository.findById(id).orElseThrow(() -> new ValidationException("There's no product for the given ID."));
+    }
 
     public ProductResponse save(ProductRequest request){
         validateDataInformed(request);
