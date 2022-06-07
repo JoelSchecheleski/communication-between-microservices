@@ -30,6 +30,10 @@ spring:
     open-in-view: false
     generate-ddl: true
 
+app-config:
+  secrets:
+    api-secret: ${API_SECRET:YXV0aC1hcGktc2VjcmV0LWRldi0xMjM0NTY=}
+
 #logging:
 #  pattern:
 #    console: "%d %-5level %logger : %msg%n"
