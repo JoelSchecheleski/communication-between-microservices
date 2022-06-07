@@ -2,8 +2,11 @@ server:
   port: ${PORT:8082}
 
 spring:
-#  main:
+  main:
+    allow-circular-references: true
+  #  main:
 #    allow-bean-definition-overriding: true
+
 
   profiles:
     active: development

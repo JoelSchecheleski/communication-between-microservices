@@ -12,8 +12,8 @@ import br.com.upper.product.api.modules.product.model.Product;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
      List<Product> findByNameContainingIgnoreCase(String name); // Product
-
     List<Product> findBySupplierId(Integer supplierId);
-
     List<Product> findByCategoryId(Integer categoryId);
+    Boolean existsByCategoryId(Integer id);
+    Boolean existsBySupplierId(Integer id);
 }

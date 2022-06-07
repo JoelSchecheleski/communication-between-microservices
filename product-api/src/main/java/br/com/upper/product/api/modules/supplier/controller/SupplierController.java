@@ -3,13 +3,16 @@ package br.com.upper.product.api.modules.supplier.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import br.com.upper.product.api.config.SuccessResponse;
 import br.com.upper.product.api.modules.supplier.dto.SupplierRequest;
 import br.com.upper.product.api.modules.supplier.dto.SupplierResponse;
 import br.com.upper.product.api.modules.supplier.service.SupplierService;
@@ -35,8 +38,19 @@ public class SupplierController {
     public List<SupplierResponse> findByName(@PathVariable String name) {
         return supplierService.findByName(name);
     }
+
     @GetMapping("{id}")
     public SupplierResponse findByIdResponse(@PathVariable Integer id) {
         return supplierService.findByIdResponse(id);
+    }
+
+    @DeleteMapping("{id}")
+    public SuccessResponse delete(@PathVariable Integer id) {
+        return supplierService.delete(id);
+    }
+
+    @PutMapping("{id}")
+    public SupplierResponse update(@RequestBody SupplierRequest request, @PathVariable Integer id) {
+        return supplierService.update(request, id);
     }
 }
