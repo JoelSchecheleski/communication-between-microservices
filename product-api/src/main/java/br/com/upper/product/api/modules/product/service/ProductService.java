@@ -12,6 +12,7 @@ import br.com.upper.product.api.config.ValidationException;
 import br.com.upper.product.api.modules.category.service.CategoryService;
 import br.com.upper.product.api.modules.product.dto.ProductRequest;
 import br.com.upper.product.api.modules.product.dto.ProductResponse;
+import br.com.upper.product.api.modules.product.dto.ProductStockDto;
 import br.com.upper.product.api.modules.product.model.Product;
 import br.com.upper.product.api.modules.product.repository.ProductRepository;
 import br.com.upper.product.api.modules.supplier.service.SupplierService;
@@ -131,5 +132,9 @@ public class ProductService {
         if (ObjectUtils.isEmpty(id)) {
             throw new ValidationException("The id was not informed.");
         }
+    }
+
+    public void updateProductStock(ProductStockDto product) {
+
     }
 }
