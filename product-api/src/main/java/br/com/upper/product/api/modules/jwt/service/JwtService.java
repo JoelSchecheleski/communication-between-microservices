@@ -16,11 +16,12 @@ public class JwtService {
     @Value("${app-config.secrets.api-secret}")
     private String apiSecret;
 
-    private static final String BEARER = "bearer";
+    private static final String EMPTY_SPACE = " ";
+    private static final Integer TOKEN_INDEX = 2;
 
     public void validateAuthorization(String token) {
+        var accessToken = extractToken(token);
         try {
-            var accessToken = extractToken(token);
             var claims = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(apiSecret.getBytes()))
                     .build()
@@ -40,9 +41,8 @@ public class JwtService {
         if (ObjectUtils.isEmpty(token)) {
             throw new AuthorizationException("The access token was not informed");
         }
-        if (token.toLowerCase().contains(BEARER)) {
-            token = token.toLowerCase();
-            token = token.replace(BEARER, Strings.EMPTY);
+        if (token.toLowerCase().contains(EMPTY_SPACE)) {
+            return token.split(EMPTY_SPACE)[TOKEN_INDEX];
         }
         return token;
     }
