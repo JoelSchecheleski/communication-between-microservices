@@ -4,9 +4,7 @@ server:
 spring:
   main:
     allow-circular-references: true
-  #  main:
-#    allow-bean-definition-overriding: true
-
+    allow-bean-definition-overriding: true
 
   profiles:
     active: development
@@ -30,9 +28,27 @@ spring:
     open-in-view: false
     generate-ddl: true
 
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST:localhost}
+    port: ${RABBIT_MQ_PORT:15672}
+    username: ${RABBIT_MQ_USERNAME:guest}
+    password: ${RABBIT_MQ_PASSWORD:guest}
+
 app-config:
   secrets:
     api-secret: ${API_SECRET:YXV0aC1hcGktc2VjcmV0LWRldi0xMjM0NTY=}
+
+  rabbit:
+    exchenge:
+      product: product.topic
+
+    routingKey:
+      product-stock: product-stock-update.routingKey
+      sales-confirmation: sales-confirmation.routingKey
+
+    queue:
+      product-stock: product-stock-update.queue
+      sales-confirmation: sales-confirmation.queue
 
 #logging:
 #  pattern:
