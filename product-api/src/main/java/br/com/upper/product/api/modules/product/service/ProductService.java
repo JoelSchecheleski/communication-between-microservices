@@ -5,18 +5,25 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import br.com.upper.product.api.config.SuccessResponse;
 import br.com.upper.product.api.config.ValidationException;
 import br.com.upper.product.api.modules.category.service.CategoryService;
+import br.com.upper.product.api.modules.product.dto.ProductQuantityDto;
 import br.com.upper.product.api.modules.product.dto.ProductRequest;
 import br.com.upper.product.api.modules.product.dto.ProductResponse;
 import br.com.upper.product.api.modules.product.dto.ProductStockDto;
 import br.com.upper.product.api.modules.product.model.Product;
 import br.com.upper.product.api.modules.product.repository.ProductRepository;
+import br.com.upper.product.api.modules.sales.dto.SalesConfirmationDTO;
+import br.com.upper.product.api.modules.sales.enums.SalesStatus;
+import br.com.upper.product.api.modules.sales.rabbitmq.SalesConfirmationSender;
 import br.com.upper.product.api.modules.supplier.service.SupplierService;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 public class ProductService {
 
@@ -30,6 +37,9 @@ public class ProductService {
 
     @Autowired
     private CategoryService categoryService;
+
+    @Autowired
+    private SalesConfirmationSender salesConfirmationSender;
 
     public List<ProductResponse> findAll() {
         return productRepository.findAll().stream().map(ProductResponse::of).collect(Collectors.toList());
@@ -134,7 +144,49 @@ public class ProductService {
         }
     }
 
+    /**
+     * Atualiza stock e notifica rabbit dessa alteração
+     * @param product
+     */
     public void updateProductStock(ProductStockDto product) {
+        try{
+            validateStockUpdateData(product);
+            updateStock(product);
+        }catch (Exception ex) {
+            log.error("Error while trying to update stock for message with error: {}", ex.getMessage(), ex);
+            salesConfirmationSender.sendSalesConfirmationMessage(new SalesConfirmationDTO(product.getSalesId(), SalesStatus.REJECTED));
+        }
+    }
 
+    private void updateStock(ProductStockDto product) {
+        product.getProducts().forEach(salesProduct -> {
+            var existingProduct = findById(salesProduct.getProductId());
+            validateQuantityInStock(salesProduct, existingProduct);
+            existingProduct.updateStock(salesProduct.getQuantity());
+            productRepository.save(existingProduct);
+            var approvedMessage = new SalesConfirmationDTO(product.getSalesId(), SalesStatus.APPROVED);
+            salesConfirmationSender.sendSalesConfirmationMessage(approvedMessage);
+        });
+    }
+
+    @Transactional // TODO: Ver a possibilidade de ser assim mesmo
+    void validateStockUpdateData(ProductStockDto product) {
+        if (ObjectUtils.isEmpty(product) || ObjectUtils.isEmpty(product.getSalesId())) {
+            throw new ValidationException("The product data and sales ID must be informed.");
+        }
+        if (ObjectUtils.isEmpty(product.getProducts())) {
+            throw new ValidationException("The sales products must be informed.");
+        }
+        product.getProducts().forEach(salesProduct -> {
+            if (ObjectUtils.isEmpty(salesProduct.getQuantity()) || ObjectUtils.isEmpty(salesProduct.getProductId())) {
+                throw new ValidationException("The productId and quantity must be informed.");
+            }
+        });
+    }
+
+    private void validateQuantityInStock(ProductQuantityDto salesProduct, Product existingProduct) {
+        if (salesProduct.getQuantity() > existingProduct.getQuantityAvailable()) {
+            throw new ValidationException(String.format("The product %s is out of stock.", existingProduct.getId()));
+        }
     }
 }
