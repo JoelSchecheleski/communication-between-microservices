@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.com.upper.product.api.config.SuccessResponse;
 import br.com.upper.product.api.modules.product.dto.ProductRequest;
 import br.com.upper.product.api.modules.product.dto.ProductResponse;
+import br.com.upper.product.api.modules.product.dto.ProductSalesResponse;
 import br.com.upper.product.api.modules.product.service.ProductService;
 
 @RestController
@@ -64,5 +65,11 @@ public class ProductController {
                                    @PathVariable Integer id) {
         return productService.update(request, id);
     }
+
+    @GetMapping("{id}/sales")
+    public ProductSalesResponse findProductSales(@PathVariable Integer id) {
+        return productService.findProductSales(id);
+    }
+
 
 }
