@@ -12,6 +12,7 @@ import org.springframework.util.ObjectUtils;
 import br.com.upper.product.api.config.SuccessResponse;
 import br.com.upper.product.api.config.ValidationException;
 import br.com.upper.product.api.modules.category.service.CategoryService;
+import br.com.upper.product.api.modules.product.dto.ProductCheckStockRequest;
 import br.com.upper.product.api.modules.product.dto.ProductQuantityDto;
 import br.com.upper.product.api.modules.product.dto.ProductRequest;
 import br.com.upper.product.api.modules.product.dto.ProductResponse;
@@ -51,32 +52,33 @@ public class ProductService {
     public ProductResponse findByIdResponse(Integer id) {
         return ProductResponse.of(findById(id));
     }
+
     public List<ProductResponse> findByName(String name) {
-       return productRepository.findByNameContainingIgnoreCase(name).stream().map(ProductResponse::of).collect(Collectors.toList());
+        return productRepository.findByNameContainingIgnoreCase(name).stream().map(ProductResponse::of).collect(Collectors.toList());
     }
 
     public List<ProductResponse> findBySupplierId(Integer supplierId) {
-        if(ObjectUtils.isEmpty(supplierId)) {
-            throw  new ValidationException("The product's supplier was not informed");
+        if (ObjectUtils.isEmpty(supplierId)) {
+            throw new ValidationException("The product's supplier was not informed");
         }
         return productRepository.findBySupplierId(supplierId).stream().map(ProductResponse::of).collect(Collectors.toList());
     }
 
     public List<ProductResponse> findByCategoryId(Integer categoryId) {
-        if(ObjectUtils.isEmpty(categoryId)) {
-            throw  new ValidationException("The product's category was not informed");
+        if (ObjectUtils.isEmpty(categoryId)) {
+            throw new ValidationException("The product's category was not informed");
         }
         return productRepository.findByCategoryId(categoryId).stream().map(ProductResponse::of).collect(Collectors.toList());
     }
 
     public Product findById(Integer id) {
-        if(ObjectUtils.isEmpty(id)) {
-            throw  new ValidationException("The product's id was not informed");
+        if (ObjectUtils.isEmpty(id)) {
+            throw new ValidationException("The product's id was not informed");
         }
         return productRepository.findById(id).orElseThrow(() -> new ValidationException("There's no product for the given ID."));
     }
 
-    public ProductResponse save(ProductRequest request){
+    public ProductResponse save(ProductRequest request) {
         validateDataInformed(request);
         validateCategoryAndSupplierId(request);
         var category = categoryService.findById(request.getCategoryId());
@@ -86,7 +88,7 @@ public class ProductService {
         return ProductResponse.of(product);
     }
 
-    public ProductResponse update(ProductRequest request, Integer id){
+    public ProductResponse update(ProductRequest request, Integer id) {
         ValidateInformedId(id);
         validateDataInformed(request);
         validateCategoryAndSupplierId(request);
@@ -102,35 +104,36 @@ public class ProductService {
     }
 
     private void validateDataInformed(ProductRequest request) {
-        if(ObjectUtils.isEmpty(request.getName())) {
-            throw  new ValidationException("The product's name was not informed");
+        if (ObjectUtils.isEmpty(request.getName())) {
+            throw new ValidationException("The product's name was not informed");
         }
-        if(ObjectUtils.isEmpty(request.getQuantityAvailable())) {
-            throw  new ValidationException("The product's quantity was not informed");
+        if (ObjectUtils.isEmpty(request.getQuantityAvailable())) {
+            throw new ValidationException("The product's quantity was not informed");
         }
-        if(request.getQuantityAvailable() <= ZERO) {
-            throw  new ValidationException("The quantity of products informed is not valid");
+        if (request.getQuantityAvailable() <= ZERO) {
+            throw new ValidationException("The quantity of products informed is not valid");
         }
     }
 
     private void validateCategoryAndSupplierId(ProductRequest request) {
-        if(ObjectUtils.isEmpty(request.getCategoryId())) {
-            throw  new ValidationException("The category ID was not informed");
+        if (ObjectUtils.isEmpty(request.getCategoryId())) {
+            throw new ValidationException("The category ID was not informed");
         }
-        if(ObjectUtils.isEmpty(request.getSupplierId())) {
-            throw  new ValidationException("The supplier ID was not informed");
+        if (ObjectUtils.isEmpty(request.getSupplierId())) {
+            throw new ValidationException("The supplier ID was not informed");
         }
     }
+
     public Boolean existsByCategoryId(Integer id) {
-        if(ObjectUtils.isEmpty(id)) {
-            throw  new ValidationException("The category id was not informed");
+        if (ObjectUtils.isEmpty(id)) {
+            throw new ValidationException("The category id was not informed");
         }
         return productRepository.existsByCategoryId(id);
     }
 
     public Boolean existsBySupplierId(Integer id) {
-        if(ObjectUtils.isEmpty(id)) {
-            throw  new ValidationException("The supplier id was not informed");
+        if (ObjectUtils.isEmpty(id)) {
+            throw new ValidationException("The supplier id was not informed");
         }
         return productRepository.existsByCategoryId(id);
     }
@@ -149,17 +152,19 @@ public class ProductService {
 
     /**
      * Atualiza stock e notifica rabbit dessa alteração
+     *
      * @param product
      */
     public void updateProductStock(ProductStockDto product) {
-        try{
+        try {
             validateStockUpdateData(product);
             updateStock(product);
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             log.error("Error while trying to update stock for message with error: {}", ex.getMessage(), ex);
             salesConfirmationSender.sendSalesConfirmationMessage(new SalesConfirmationDTO(product.getSalesId(), SalesStatus.REJECTED));
         }
     }
+
     @Transactional
     void updateStock(ProductStockDto product) {
         var productsForUpdate = new ArrayList<Product>();
@@ -176,7 +181,8 @@ public class ProductService {
         }
     }
 
-    @Transactional // TODO: Ver a possibilidade de ser assim mesmo
+    @Transactional
+        // TODO: Ver a possibilidade de ser assim mesmo
     void validateStockUpdateData(ProductStockDto product) {
         if (ObjectUtils.isEmpty(product) || ObjectUtils.isEmpty(product.getSalesId())) {
             throw new ValidationException("The product data and sales ID must be informed.");
@@ -200,13 +206,32 @@ public class ProductService {
     public ProductSalesResponse findProductSales(Integer id) {
         var product = findById(id);
         try {
-            var sales = salesClient
-                    .findSalesByProductId(product.getId())
-                    .orElseThrow(() -> new ValidationException("The sales was not found by this product"));
+            var sales = salesClient.findSalesByProductId(product.getId()).orElseThrow(() -> new ValidationException("The sales was not found by this product"));
             return ProductSalesResponse.of(product, sales.getSales());
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new ValidationException("There was an error trying to get the product's sales.");
         }
+    }
 
+    public SuccessResponse checkProductsStock(ProductCheckStockRequest request) {
+        if (ObjectUtils.isEmpty(request)) {
+            throw new ValidationException("The request data  and products must be informed");
+        }
+        request.getProducts().forEach(this::validateStock);
+        return SuccessResponse.create("The stock is ok.");
+    }
+
+    private void validateStock(ProductQuantityDto productQuantity) {
+        if (productQuantity.getQuantity() <= 0) {
+            throw new ValidationException(String.format("The quantity product %s must be informed.", productQuantity.getProductId()));
+        }
+
+        if (ObjectUtils.isEmpty(productQuantity.getProductId()) || ObjectUtils.isEmpty(productQuantity.getQuantity())) {
+            throw new ValidationException("Product ID and quantiy must be informed");
+        }
+        var product = findById(productQuantity.getProductId());
+        if (productQuantity.getQuantity() > product.getQuantityAvailable()) {
+            throw new ValidationException(String.format("The product %s is out of stock.", productQuantity.getProductId()));
+        }
     }
 }

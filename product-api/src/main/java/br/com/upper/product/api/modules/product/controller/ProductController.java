@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.upper.product.api.config.SuccessResponse;
+import br.com.upper.product.api.config.ValidationException;
+import br.com.upper.product.api.modules.product.dto.ProductCheckStockRequest;
 import br.com.upper.product.api.modules.product.dto.ProductRequest;
 import br.com.upper.product.api.modules.product.dto.ProductResponse;
 import br.com.upper.product.api.modules.product.dto.ProductSalesResponse;
+import br.com.upper.product.api.modules.product.dto.ProductStockDto;
 import br.com.upper.product.api.modules.product.service.ProductService;
 
 @RestController
@@ -66,10 +69,18 @@ public class ProductController {
         return productService.update(request, id);
     }
 
-    @GetMapping("{id}/sales")
-    public ProductSalesResponse findProductSales(@PathVariable Integer id) {
-        return productService.findProductSales(id);
+    @PostMapping("check-stock")
+    public SuccessResponse checkProductsStock(@RequestBody ProductCheckStockRequest request) {
+        return productService.checkProductsStock(request);
     }
 
+    @GetMapping("{id}/sales")
+    public ProductSalesResponse findProductSales(@PathVariable Integer id) {
+        try {
+            return productService.findProductSales(id);
+        } catch(Exception ex) {
+            throw new ValidationException(String.format("Can't find products sale by id: {}", ex));
+        }
+    }
 
 }
