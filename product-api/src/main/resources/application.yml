@@ -1,5 +1,5 @@
 server:
-  port: ${PORT:8082}
+  port: ${PORT:8081}
 
 spring:
   main:
@@ -43,7 +43,7 @@ app-config:
     api-secret: ${API_SECRET:YXV0aC1hcGktc2VjcmV0LWRldi0xMjM0NTY=}
 
   rabbit:
-    exchenge:
+    exchange:
       product: product.topic
 
     routingKey:
