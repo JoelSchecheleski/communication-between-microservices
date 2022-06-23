@@ -54,13 +54,13 @@ class UserService {
 
   async getAccessToken(req) {
     try {
+      const { email, password } = req.body;
       const { transactionid, serviceid } = req.headers;
       console.info(
         `Request to POST login with data ${JSON.stringify(
           req.body
         )} | [transactionID: ${transactionid} | serviceID: ${serviceid}]`
       );
-      const { email, password } = req.body;
       this.validateAccessTokenData(email, password);
       let user = await UserRepository.findByEmail(email);
       this.validateUserNotFound(user);
@@ -73,6 +73,7 @@ class UserService {
       let response = {
         status: httpStatus.SUCCESS,
         accessToken,
+        transactionid: transactionid
       };
       console.info(
         `Response to POST login with data ${JSON.stringify(

@@ -3,11 +3,16 @@ import express from "express";
 import { createInitialData } from "./src/config/db/initialData.js";
 import userRoutes from "./src/domain/routes/UserRoutes.js";
 import tracing from "./src/config/tracing.js";
+import bodyParser from "body-parser"
 
 const app = express();
 const env = process.env;
 const PORT = env.PORT || 8080;
 const CONTAINER_ENV = "container";
+
+app.use(bodyParser.json());
+app.use(tracing);
+app.use(userRoutes);
 
 app.get("/api/status", (req, res) => {
   return res.status(200).json({
@@ -31,9 +36,6 @@ app.get("/api/initial-data", (req, res) => {
   createInitialData();
   return res.json({ message: "Data created." });
 });
-
-app.use(tracing);
-app.use(userRoutes);
 
 app.listen(PORT, () => {
   console.info(`Server started successfully at port ${PORT}`);

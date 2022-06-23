@@ -8,6 +8,8 @@ import checkToken from "./src/config/auth/checkToken.js";
 import orderRoutes from "./src/modules/sales/routes/OrderRoutes.js";
 import tracing from "./src/config/tracing.js";
 
+import bodyParser from "body-parser"
+
 // import {sendMessageToProductStockUpdateQueue} from "./src/modules/product/rabbitmq/productStockUpdateSender.js";
 
 const app = express();
@@ -16,6 +18,8 @@ const PORT = env.PORT || 8082;
 const CONTAINER_ENV = "container";
 const THREE_MINUTES = 180000;
 
+app.use(bodyParser.json());
+app.use(express.json());
 startApplication();
 
 async function startApplication() {
@@ -31,8 +35,6 @@ async function startApplication() {
         connectRabbitMq();
     }
 }
-
-app.use(express.json());
 
 app.get("/api/initial-data", async (req, res) => {
     await createInitialData();
