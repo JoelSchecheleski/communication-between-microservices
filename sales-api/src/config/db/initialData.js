@@ -58,7 +58,7 @@ export async function createInitialData() {
     });
     let initialData = await Order.find();
     console.info(
-      `Initial data was created: ${JSON.stringify(initialData, undefined, 4)}`
+      `Initial data was created: ${JSON.stringify(initialData, undefined, 2)}`
     );
   } catch (error) {
     console.error(error);

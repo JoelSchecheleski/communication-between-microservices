@@ -4,6 +4,9 @@ import { RABBIT_MQ_URL } from "../../../config/constants/secrets.js";
 import { SALES_CONFIRMATION_QUEUE } from "../../../config/rabbitmq/queue.js";
 import OrderService from "../service/OrderService.js";
 
+/**
+ * Escuta as mensagem para Queue sales-confirmation.queue de confirmação da venda
+ */
 export function listenToSalesConfirmationQueue() {
   amqp.connect(RABBIT_MQ_URL, (error, connection) => {
     if (error) {
@@ -14,7 +17,7 @@ export function listenToSalesConfirmationQueue() {
       if (error) {
         throw error;
       }
-      channel.consume(
+      channel.consume( // Consome a mensagem da topic
         SALES_CONFIRMATION_QUEUE,
         (message) => {
           console.info(
