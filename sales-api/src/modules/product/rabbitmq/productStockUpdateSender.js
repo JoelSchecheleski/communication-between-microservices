@@ -6,10 +6,6 @@ import {
   PRODUCT_STOCK_UPDATE_ROUTING_KEY,
 } from "../../../config/rabbitmq/queue.js";
 
-/**
- * Publica na topic a mensagem de atualização de estoque Queue product-stock-update.queue
- * @param message
- */
 export function sendMessageToProductStockUpdateQueue(message) {
   amqp.connect(RABBIT_MQ_URL, (error, connection) => {
     if (error) {
@@ -23,7 +19,7 @@ export function sendMessageToProductStockUpdateQueue(message) {
       console.info(
         `Sending message to product update stock: ${jsonStringMessage}`
       );
-      channel.publish( // publica na topic
+      channel.publish(
         PRODUCT_TOPIC,
         PRODUCT_STOCK_UPDATE_ROUTING_KEY,
         Buffer.from(jsonStringMessage)
